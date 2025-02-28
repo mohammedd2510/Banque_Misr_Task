@@ -38,4 +38,4 @@ jobs:
       # Step 5: Push the Docker image to Docker Hub
       - name: Push Docker image 
         run: |
-              docker push mosama25/Custom_ARC_Image:latest
+              docker push mosama25/custom_arc_image:latest

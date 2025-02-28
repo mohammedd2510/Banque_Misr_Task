@@ -25,10 +25,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 # Install Helm
 RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-# Verify installations
-RUN kubectl version --client
-RUN helm version
-RUN aws --version 
+
 # Switch back to runner user
 USER runner
 
