@@ -1,0 +1,35 @@
+FROM ghcr.io/actions/actions-runner:latest
+
+# Switch to root user
+USER root
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    bash \
+    tar \
+    gzip \
+    python3 \
+    python3-pip \
+    openjdk-17-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI
+RUN pip3 install --upgrade awscli
+
+# Install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/
+
+# Install Helm
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Verify installations
+RUN kubectl version --client
+RUN helm version
+RUN aws --version 
+# Switch back to runner user
+USER runner
+
+ENTRYPOINT ["/home/runner/run.sh"]
