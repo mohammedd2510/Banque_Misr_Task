@@ -33,7 +33,7 @@ jobs:
       # Step 4: Build the Docker image using the specified Dockerfile
       - name: Build Docker image
         run: |
-           docker build -f Custom_ACR_Image_DockerFile -t mosama25/custom_arc_image:latest .
+           docker build -f Custom_ARC_Image_DockerFile -t mosama25/custom_arc_image:latest .
 
       # Step 5: Push the Docker image to Docker Hub
       - name: Push Docker image 
