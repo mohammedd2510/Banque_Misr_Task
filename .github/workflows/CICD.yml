@@ -6,22 +6,22 @@ on:
       - dev
   workflow_dispatch:
 
-
-
 jobs:
   build-and-deploy:
     name: Build, Test, and Deploy
-    runs-on: ubuntu-latest
+    runs-on: arc-runner-set
     env:
       DOCKER_USERNAME: mosama25
       MAJOR: 1
       MINOR: 0
       PATCH: ${{ github.run_number }}
-      VERSION: "${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         # Pulls the latest code from the repository
+
+      - name: Set up Version
+        run: echo "VERSION=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_ENV
 
       - name: Run Checkstyle Linting
         run: ./gradlew checkstyleMain checkstyleTest
