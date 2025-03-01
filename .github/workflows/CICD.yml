@@ -55,7 +55,7 @@ jobs:
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
           pollingTimeoutSec: 600
-          working-directory: ./spring-boot-app  
+          scan-report-path: "spring-boot-app/build/sonar/report-task.txt"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         
