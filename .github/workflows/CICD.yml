@@ -50,12 +50,16 @@ jobs:
         working-directory: ./spring-boot-app
         # Analyzes code quality using SonarQube
 
+      - name: Move SonarQube Report to Root (if needed)
+        run: |
+          mkdir -p .scannerwork
+          mv ./spring-boot-app/build/sonar/report-task.txt .scannerwork/report-task.txt
+
       - name: SonarQube Quality Gate check
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
           pollingTimeoutSec: 600
-          scan-report-path: "spring-boot-app/build/sonar/report-task.txt"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         
