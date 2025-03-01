@@ -1,0 +1,57 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
+	id 'org.sonarqube' version '4.0.0.2929'
+	}
+	
+sonarqube {
+    properties {
+        property "sonar.projectKey", "my-project"
+        property "sonar.host.url", "http://sonarqube.mosama.site"
+        property "sonar.token", System.getenv("SONAR_TOKEN")
+        property "sonar.scm.disabled","true"
+
+    }
+}
+	
+apply plugin: 'checkstyle'
+checkstyle {
+    toolVersion '7.8.1'
+    configFile file("config/checkstyle/checkstyle.xml")
+}
+checkstyleMain {
+    source ='src/main/java'
+}
+checkstyleTest {
+    source ='src/test/java'
+}
+
+
+
+tasks.named('jar') {
+    enabled = false
+}
+
+
+
+
+group = 'com.example'
+version = System.getenv("VERSION")
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.github.lalyos:jfiglet:0.0.8'
+	checkstyle 'com.puppycrawl.tools:checkstyle:10.12.1'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
