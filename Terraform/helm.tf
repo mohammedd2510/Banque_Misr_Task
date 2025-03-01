@@ -36,16 +36,6 @@ resource "helm_release" "external_dns" {
     name  = "txtOwnerId"
     value = var.TXT_OWNER_ID 
   }
-  set {
-    name  = "aws.credentials.accessKey"
-    value = data.external.aws_creds.result["aws_access_key_id"]
-
-  }
-  set {
-    name  = "aws.credentials.secretKey"
-    value = data.external.aws_creds.result["aws_secret_access_key"]
-  }
-
 }
 
 resource "helm_release" "arc_runner_scale_set_controller" {
