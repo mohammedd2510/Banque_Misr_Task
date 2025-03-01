@@ -21,6 +21,13 @@ terraform {
             version = "~> 2.0"
         }
     }
+     backend "s3" {
+    encrypt = true
+    bucket = "terraformm-state-s3"
+    dynamodb_table = "terraform-lock-dynamodb"
+    region = "us-east-1"
+    key = "statefile"
+ }
 }
 
 provider "aws" {
