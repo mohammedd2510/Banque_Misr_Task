@@ -1,0 +1,6 @@
+provider: aws   
+aws:
+   zoneType: public   
+   region: us-east-1   
+
+

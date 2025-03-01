@@ -1,0 +1,28 @@
+monitoringPasscode: "yourPasscode"
+postgresql:
+   persistence:
+      storageClass: "gp2"
+community:
+  enabled: true 
+  
+ingress:
+  enabled: true
+  # Used to create an Ingress record.
+  hosts:
+    - name: sonarqube.mosama.site
+      pathType: Prefix
+
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing  # Expose ALB to the public internet
+    alb.ingress.kubernetes.io/actions.redirect-to-https: >
+      {"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}
+ 
+  ingressClassName: alb
+ 
+service:
+  type: NodePort  
+
+             
+
+

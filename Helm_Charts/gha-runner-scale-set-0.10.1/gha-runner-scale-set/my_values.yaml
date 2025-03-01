@@ -1,0 +1,8 @@
+githubConfigUrl: "https://github.com/mohammedd2510/Banque_Misr_Task"
+template:
+  spec:
+    containers:
+      - name: runner
+        image: mosama25/custom_arc_image:latest
+        command: ["/home/runner/run.sh"]
+
