@@ -5,4 +5,5 @@ template:
       - name: runner
         image: mosama25/custom_arc_image:latest
         command: ["/home/runner/run.sh"]
-
+containerMode:
+  type: "dind"  ## type can be set to dind or kubernetes
