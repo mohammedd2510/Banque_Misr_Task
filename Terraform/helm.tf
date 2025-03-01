@@ -36,6 +36,7 @@ resource "helm_release" "external_dns" {
     name  = "txtOwnerId"
     value = var.TXT_OWNER_ID 
   }
+
 }
 
 resource "helm_release" "arc_runner_scale_set_controller" {

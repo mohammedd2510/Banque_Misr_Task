@@ -59,3 +59,17 @@ resource "aws_iam_policy_attachment" "aws_load_balancer_controller_policy_attach
   policy_arn = aws_iam_policy.aws_load_balancer_controller_policy.arn
 }
 
+# Read the policy from the JSON file
+resource "aws_iam_policy" "external_dns_policy" {
+  name        = "ExternalDNS_IAM_Policy"
+  description = "IAM policy for External DNS"
+  policy      = file("./Modules/EKS_Cluster_Module/external-dns-iam-policy.json") # Read the JSON file directly
+}
+
+
+# Attach the policy to the IAM role
+resource "aws_iam_policy_attachment" "external_dns_policy_attachment" {
+  name       = "ExternalDNSIAMPolicyAttachment"
+  roles      = [aws_iam_role.workernodes.name]
+  policy_arn = aws_iam_policy.external_dns_policy.arn
+}
