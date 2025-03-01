@@ -50,6 +50,16 @@ jobs:
         working-directory: ./spring-boot-app
         # Analyzes code quality using SonarQube
 
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+          working-directory: ./spring-boot-app  
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        
+
       - name: Build Application
         run: ./gradlew build
         working-directory: ./spring-boot-app
