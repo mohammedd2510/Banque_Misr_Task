@@ -50,7 +50,7 @@ jobs:
         working-directory: ./spring-boot-app
         # Analyzes code quality using SonarQube
 
-      - name: Move SonarQube Report to Root (if needed)
+      - name: Move SonarQube Report to Root 
         run: |
           mkdir -p .scannerwork
           mv ./spring-boot-app/build/sonar/report-task.txt .scannerwork/report-task.txt
