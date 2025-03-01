@@ -34,8 +34,8 @@ jobs:
         with:
           name: checkstyle-reports
           path: |
-            ./spring-boot-app/build/reports/checkstyle/main.html
-            ./spring-boot-app/build/reports/checkstyle/test.html
+            ./spring-boot-app/build/reports/checkstyle
+            
         # Uploads Checkstyle reports even if linting fails
 
       - name: Run Unit Tests
