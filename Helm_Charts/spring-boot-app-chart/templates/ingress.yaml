@@ -16,6 +16,17 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: redirect-to-https
+            port:
+              name: use-annotation
+
+  - host: "{{ .Values.ingress.host }}"
+    http:
+      paths:
+      - path: /
         pathType: Exact
         backend:
           service:
@@ -30,20 +41,5 @@ spec:
             port: 
               number: 80
 
-  - host: "{{ .Values.ingress.host }}"
-    http:
-      paths:
-      - path: /
-        pathType: Exact
-        backend:
-          service:
-            name: redirect-to-https
-            port:
-              name: use-annotation
-      - path: /live
-        pathType: Exact
-        backend:
-          service:
-            name: redirect-to-https
-            port:
-              name: use-annotation        
+
+] 
