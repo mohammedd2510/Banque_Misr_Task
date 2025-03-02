@@ -49,7 +49,8 @@ jobs:
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         run: |
-          terraform destroy -target=helm_release.sonar_qube -auto-approve
+          aws eks update-kubeconfig --region us-east-1 --name eks-cluster
+          kubectl delete ingress --all --all-namespaces
           terraform destroy --auto-approve
         env:
           TF_VAR_TXT_OWNER_ID: ${{ secrets.TXT_OWNER_ID }}
