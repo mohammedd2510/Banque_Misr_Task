@@ -29,3 +29,14 @@ spec:
             name: spring-boot-app-svc
             port: 
               number: 80
+
+  - host: "{{ .Values.ingress.host }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: redirect-to-https
+            port:
+              name: use-annotation
