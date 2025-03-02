@@ -1,9 +1,9 @@
-githubConfigUrl: "https://github.com/mohammedd2510/Banque_Misr_Task"
+githubConfigUrl: "https://github.com/mohammedd2510/Banque_Misr_Task" # URL to the GitHub repository
 template:
   spec:
     containers:
-      - name: runner
-        image: mosama25/custom_arc_image:latest
-        command: ["/home/runner/run.sh"]
+      - name: runner # Name of the container
+        image: mosama25/custom_arc_image:latest # Docker image to use for the container
+        command: ["/home/runner/run.sh"] # Command to run inside the container
 containerMode:
-  type: "dind"  ## type can be set to dind or kubernetes
+  type: "dind"  ## type can be set to dind or kubernetes # Container mode type, can be 'dind' or 'kubernetes'

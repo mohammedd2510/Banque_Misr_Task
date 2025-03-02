@@ -9,7 +9,3 @@ variable "Public_Subnet2_id" {
 variable "security_group_id" {
  type = string  
 }
-variable "eks_worker_ami_id" {
-  type = string
-  default = "ami-094fb6db0f574f0d6"
-}

@@ -1,19 +1,23 @@
-apiVersion: apps/v1
-kind: Deployment
+# This is a Helm template for a Kubernetes Deployment resource.
+# It defines the deployment configuration for the spring-boot-app.
+
+apiVersion: apps/v1  # Specifies the API version for the Deployment resource.
+kind: Deployment  # Specifies that this resource is a Deployment.
 metadata:
-  name: spring-boot-app
+  name: spring-boot-app  # The name of the Deployment.
+
 spec:
-  replicas: 1
+  replicas: 1  # Number of desired pod replicas.
   selector:
     matchLabels:
-      app: spring-boot-app
+      app: spring-boot-app  # Label selector to identify the pods managed by this Deployment.
   template:
     metadata:
       labels:
-        app: spring-boot-app
+        app: spring-boot-app  # Labels to be applied to the pods.
     spec:
       containers:
-      - name: spring-boot-app
-        image: "mosama25/springboot-app:{{ .Values.image.tag }}"
+      - name: spring-boot-app  # Name of the container.
+        image: "mosama25/springboot-app:{{ .Values.image.tag }}"  # Docker image for the container, with tag from values.
         ports:
-        - containerPort: 8080
+        - containerPort: 8080  # Port on which the container will listen.

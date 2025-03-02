@@ -1,45 +1,54 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# This file defines the Ingress resource for the Spring Boot application.
+# It configures the Ingress to use an Application Load Balancer (ALB) with specific annotations.
+# The Ingress resource includes rules for redirecting HTTP traffic to HTTPS and handling application traffic.
+
+apiVersion: networking.k8s.io/v1  # API version for Ingress resource
+kind: Ingress  # Resource type
 metadata:
-  name: ingress-spring-boot-app
+  name: ingress-spring-boot-app  # Name of the Ingress resource
   annotations:
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'  # Define ALB listener ports
     alb.ingress.kubernetes.io/scheme: internet-facing  # Expose ALB to the public internet
-    alb.ingress.kubernetes.io/actions.redirect-to-https: >
-      {"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}
-    alb.ingress.kubernetes.io/group.name: shared-group  
+
+    # Redirect HTTP traffic to HTTPS
+    alb.ingress.kubernetes.io/actions.redirect-to-https: >  
+      {"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}} 
+    alb.ingress.kubernetes.io/group.name: shared-group  # Group name for ALB to use one ALB for multiple Ingress resources
 
 spec:
-  ingressClassName: alb
+  ingressClassName: alb  # Specify the ingress class to use ALB
   rules:
-  - host: "{{ .Values.ingress.host }}"
+  # The host value for the Ingress rules, sourced from the ingress.host value in the Helm chart's values.yaml file
+  - host: "{{ .Values.ingress.host }}"  # Host for the redirect rule
     http:
       paths:
-      - path: /
-        pathType: Prefix
+      - path: /  # Path for the redirect rule
+        pathType: Prefix  # Path type
         backend:
           service:
-            name: redirect-to-https
+            name: redirect-to-https  # Backend service for redirect
             port:
-              name: use-annotation
+              name: use-annotation  # Use annotation for port
 
-  - host: "{{ .Values.ingress.host }}"
+  # The host value for the Ingress rules, sourced from the ingress.host value in the Helm chart's values.yaml file
+  - host: "{{ .Values.ingress.host }}"  # Host for the application traffic rule
     http:
       paths:
-      - path: /
-        pathType: Exact
+      - path: /  # Path for the application traffic
+        pathType: Exact  # Path type
         backend:
           service:
-            name: spring-boot-app-svc
+            name: spring-boot-app-svc  # Backend service for application traffic
             port: 
-              number: 80
-      - path: /live
-        pathType: Exact
+              number: 80  # Port number for application traffic
+      - path: /live  # Path for the live endpoint
+        pathType: Exact  # Path type
         backend:
           service:
-            name: spring-boot-app-svc
+            name: spring-boot-app-svc  # Backend service for live endpoint
             port: 
-              number: 80
+              number: 80  # Port number for live endpoint
+
 
 
  

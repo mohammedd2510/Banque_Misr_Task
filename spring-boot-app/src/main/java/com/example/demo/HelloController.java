@@ -16,10 +16,10 @@ public class HelloController {
      */
     @GetMapping("/")
     public String hello() {
-        return "Hello, From Mohamed Osama new version";
+        return "Hello, From Mohamed Osama";
     }
     @GetMapping("/live")
     public String hello_from_live() {
-        return "Hello, From Live Endpoint new version";
+        return "Hello, From Live Endpoint";
     }
 }
