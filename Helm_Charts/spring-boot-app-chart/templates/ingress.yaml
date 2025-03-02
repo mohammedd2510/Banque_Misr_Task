@@ -34,9 +34,16 @@ spec:
     http:
       paths:
       - path: /
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: redirect-to-https
             port:
               name: use-annotation
+      - path: /live
+        pathType: Exact
+        backend:
+          service:
+            name: redirect-to-https
+            port:
+              name: use-annotation        
