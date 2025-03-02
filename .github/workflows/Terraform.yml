@@ -51,6 +51,7 @@ jobs:
         run: |
           aws eks update-kubeconfig --region us-east-1 --name eks-cluster
           kubectl delete ingress --all --all-namespaces
+          helm list --all-namespaces -o json | jq -r '.[] | "\(.name) \(.namespace)"' | while read name ns; do helm uninstall "$name" -n "$ns"; done
           terraform destroy --auto-approve
         env:
           TF_VAR_TXT_OWNER_ID: ${{ secrets.TXT_OWNER_ID }}
