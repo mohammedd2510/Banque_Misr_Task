@@ -1,0 +1,15 @@
+# This file defines a Kubernetes Service for the Spring Boot application.
+# It exposes the application to be accessible from outside the Kubernetes cluster.
+
+apiVersion: v1  # Specifies the API version used to create this resource.
+kind: Service  # Defines the type of Kubernetes resource, which is a Service.
+metadata:
+  name: spring-boot-app-svc  # The name of the Service.
+spec:
+  type: NodePort  # The type of Service, which exposes the service on each Node's IP at a static port.
+  selector:
+    app: spring-boot-app  # Selects the pods with the label "app: spring-boot-app".
+  ports:
+    - protocol: TCP  # The protocol used by the Service.
+      port: 80  # The port that the Service will expose.
+      targetPort: 8080  # The port on the container that the Service will forward traffic to.

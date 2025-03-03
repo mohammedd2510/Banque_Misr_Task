@@ -1,0 +1,113 @@
+name: CI/CD for Spring Boot App
+
+on:
+  # Trigger the workflow on push to the 'dev' branch
+  push:
+    branches:
+      - dev
+  # Allow manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build, Test, and Deploy
+    runs-on: arc-runner-set # Uses self-hosted ARC GitHub runner
+    env:
+      DOCKER_USERNAME: mosama25 # Docker Hub username
+      MAJOR: 1 # Major version number
+      MINOR: 0 # Minor version number
+      PATCH: ${{ github.run_number }} # Patch version number based on the GitHub run number
+    steps:
+      # Checkout the latest code from the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Set up the application version
+      - name: Set up Version
+        run: echo "VERSION=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_ENV
+
+      # Run Checkstyle linting to check code style violations
+      - name: Run Checkstyle Linting
+        run: ./gradlew checkstyleMain checkstyleTest
+        working-directory: ./spring-boot-app
+
+      # Upload Checkstyle reports even if linting fails
+      - name: Upload Checkstyle Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-reports
+          path: |
+            ./spring-boot-app/build/reports/checkstyle
+
+      # Run unit tests to ensure code correctness
+      - name: Run Unit Tests
+        run: ./gradlew test
+        working-directory: ./spring-boot-app
+
+      # Analyze code quality using SonarQube
+      - name: Run SonarQube Scan
+        run: ./gradlew sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: ./spring-boot-app
+
+      # Move the SonarQube report to the root directory
+      - name: Move SonarQube Report to Root 
+        run: |
+          mkdir -p .scannerwork
+          mv ./spring-boot-app/build/sonar/report-task.txt .scannerwork/report-task.txt
+
+      # Check the SonarQube Quality Gate status
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          pollingTimeoutSec: 600
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # Compile and build the Spring Boot application
+      - name: Build Application
+        run: ./gradlew build
+        working-directory: ./spring-boot-app
+
+      # Create a Docker image using the application build
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ env.DOCKER_USERNAME }}/springboot-app:v${{ env.VERSION }} .
+        working-directory: ./spring-boot-app  
+
+      # Authenticate with Docker Hub using stored credentials
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ env.DOCKER_USERNAME }}" --password-stdin
+
+      # Push the Docker image to Docker Hub for deployment
+      - name: Push Docker Image
+        run: |
+          docker push ${{ env.DOCKER_USERNAME }}/springboot-app:v${{ env.VERSION }}
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 
+
+      # Configure kubectl to interact with the EKS cluster
+      - name: Configure kubectl
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name eks-cluster
+
+      # Update the image tag in the Helm chart
+      - name: Update Image Tag in Helm Chart
+        run: sed -i 's/v.*/v${{ env.VERSION }}/' ./Helm_Charts/spring-boot-app-chart/values.yaml
+
+      # Deploy the application to the development environment using Helm
+      - name: Deploy to Dev Environment
+        run: helm upgrade --install springboot-app-dev ./Helm_Charts/spring-boot-app-chart --namespace springboot-app-dev --create-namespace -f ./Helm_Charts/spring-boot-app-chart/values-dev.yaml
+
+      # Deploy the application to the production environment using Helm
+      - name: Deploy to Prod Environment
+        run: helm upgrade --install springboot-app-prod ./Helm_Charts/spring-boot-app-chart --namespace springboot-app-prod --create-namespace -f ./Helm_Charts/spring-boot-app-chart/values-prod.yaml

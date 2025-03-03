@@ -18,14 +18,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step to checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step to set up Terraform CLI
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: latest
 
+      # Step to configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -33,11 +36,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      # Step to initialize Terraform
       - name: Terraform Init
         run: terraform init
         working-directory: Terraform
 
-
+      # Step to apply Terraform configuration if action is 'apply' or on push event
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply' || github.event_name == 'push'
         run: terraform apply --auto-approve 
@@ -46,11 +50,11 @@ jobs:
           TF_VAR_GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         working-directory: Terraform  
 
+      # Step to destroy Terraform-managed infrastructure if action is 'destroy'
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         run: |
           aws eks update-kubeconfig --region us-east-1 --name eks-cluster
-          kubectl delete ingress --all --all-namespaces
           helm list --all-namespaces -o json | jq -r '.[] | "\(.name) \(.namespace)"' | while read name ns; do helm uninstall "$name" -n "$ns"; done
           terraform destroy --auto-approve
         env:
